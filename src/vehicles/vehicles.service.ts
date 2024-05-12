@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { CreateVehicleDto } from './dto/create-vehicle.dto'
 import { UpdateVehicleDto } from './dto/update-vehicle.dto'
+import { PrismaService } from '@/prisma/prisma.service'
 
 @Injectable()
 export class VehiclesService {
+  constructor(private prisma: PrismaService) {}
+
   create(createVehicleDto: CreateVehicleDto) {
     return 'This action adds a new vehicle'
   }
