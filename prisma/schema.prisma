@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum VehicleType {
+  SUV
+  Sedan
+
+	@@map("vehicle_types")
+}
+
+model Vehicle {
+  id          Int       @default(autoincrement()) @id
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  plateNo     String    @unique   // DXB G 32104
+  type        VehicleType                // SUV (Enum)
+  schedules   ScheduleOnVehicles[]
+
+  // In case we wish to remove a vehicle from the system,
+  // this value ensures vehicle can't be booked for new events
+  // so we can safely delete it once it is not related
+  to_delete   Boolean   @default(false)
+
+  @@map("vehicles")
+}
+
+model Schedule {
+  id                Int       @default(autoincrement()) @id
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  source            String
+  destination       String
+  
+  startDate         DateTime  // @map("date")
+  duration_in_days  Int       // Days booked @map("duration")
+  endDate           DateTime  // start + duration
+
+  vehicles          ScheduleOnVehicles[]
+
+	@@map("schedules")
+}
+
+model ScheduleOnVehicles {
+  schedule    Schedule  @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId  Int
+  vehicle     Vehicle   @relation(fields: [vehicleId], references: [id], onUpdate: Restrict)
+  vehicleId   Int
+
+  @@id([scheduleId, vehicleId])
+  @@map("schedule_on_vehicles")
+}
