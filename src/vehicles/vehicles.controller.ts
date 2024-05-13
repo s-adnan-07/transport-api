@@ -6,10 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common'
 import { VehiclesService } from './vehicles.service'
 import { CreateVehicleDto } from './dto/create-vehicle.dto'
 import { UpdateVehicleDto } from './dto/update-vehicle.dto'
+import { GetVehicleDto } from './dto/get-vehicle.dto'
 
 @Controller('vehicles')
 export class VehiclesController {
@@ -23,6 +27,12 @@ export class VehiclesController {
   @Get()
   findAll() {
     return this.vehiclesService.findAll()
+  }
+
+  @Get('available')
+  @UsePipes(ValidationPipe)
+  findAvailable(@Query() getVehicleDto: GetVehicleDto) {
+    return this.vehiclesService.findAvailable(getVehicleDto)
   }
 
   @Get(':id')

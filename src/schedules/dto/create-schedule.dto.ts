@@ -1,11 +1,11 @@
 import {
   ArrayNotEmpty,
   IsArray,
-  IsDate,
+  IsDateString,
   IsInt,
   IsNotEmpty,
+  IsPositive,
   IsString,
-  MaxLength,
 } from 'class-validator'
 
 export class CreateScheduleDto {
@@ -17,18 +17,23 @@ export class CreateScheduleDto {
   @IsNotEmpty()
   destination: string
 
-  @IsDate()
+  @IsDateString({ strict: true })
   @IsNotEmpty()
-  startDate: Date
+  startDate: string
 
   @IsInt()
+  @IsPositive()
   @IsNotEmpty()
-  duration: number
+  duration_in_days: number
 
   // Note: Maybe take bigint, coz scaling issues
   @IsInt({ each: true })
   @IsNotEmpty({ each: true })
   @IsArray()
   @ArrayNotEmpty()
-  vehicleId: number[]
+  vehicleIds: number[]
+
+  // @IsNotEmptyObject()
+  // @IsValidVehicle()
+  // vehicles: Partial<Record<VehicleType, number>>
 }

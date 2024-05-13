@@ -6,18 +6,30 @@ import {
   Patch,
   Param,
   Delete,
+  UsePipes,
+  ValidationPipe,
+  UseFilters,
 } from '@nestjs/common'
 import { SchedulesService } from './schedules.service'
 import { CreateScheduleDto } from './dto/create-schedule.dto'
 import { UpdateScheduleDto } from './dto/update-schedule.dto'
+import { SchedulesFilter } from './schedules.filter'
 
 @Controller('schedules')
 export class SchedulesController {
   constructor(private readonly schedulesService: SchedulesService) {}
 
+  // TODO: Add a response interceptor to modify response messages
   @Post()
-  create(@Body() createScheduleDto: CreateScheduleDto) {
-    return this.schedulesService.create(createScheduleDto)
+  @UsePipes(ValidationPipe)
+  @UseFilters(SchedulesFilter)
+  create(@Body() { vehicleIds, ...createScheduleDto }: CreateScheduleDto) {
+    const endDate = createScheduleDto.startDate
+
+    return this.schedulesService.create(vehicleIds, {
+      endDate,
+      ...createScheduleDto,
+    })
   }
 
   @Get()
