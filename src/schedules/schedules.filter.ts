@@ -2,7 +2,7 @@ import { ArgumentsHost, Catch, HttpStatus, Logger } from '@nestjs/common'
 import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core'
 import { Prisma } from '@prisma/client'
 
-const VEHICLE_NOT_AVAILABLE_EXCEPTION = 'P2025'
+const RECORD_NOT_FOUND = 'P2025'
 
 // Note: Exception filters need to be put in controllers not services
 @Catch(Prisma.PrismaClientKnownRequestError)
@@ -15,22 +15,16 @@ export class SchedulesFilter extends BaseExceptionFilter {
     const ctx = host.switchToHttp()
     const errorCode = exception.code
     const statusCode =
-      errorCode == VEHICLE_NOT_AVAILABLE_EXCEPTION
-        ? HttpStatus.FORBIDDEN
+      errorCode == RECORD_NOT_FOUND
+        ? HttpStatus.NOT_FOUND
         : HttpStatus.INTERNAL_SERVER_ERROR
 
-    const message =
-      errorCode == VEHICLE_NOT_AVAILABLE_EXCEPTION
-        ? 'One or more vehicles is not available for the specified time period'
-        : exception.message
-
-    // if (exception.code === ''){}
-
-    this.logger.error(exception.message)
+    this.logger.error(exception)
 
     const responseBody = {
+      errorCode,
       statusCode,
-      message,
+      message: exception.meta,
     }
 
     httpAdapter.reply(ctx.getResponse(), responseBody, statusCode)
