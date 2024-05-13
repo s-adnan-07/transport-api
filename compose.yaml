@@ -1,0 +1,38 @@
+services:
+  api-gateway:
+    image: api-gateway
+    container_name: api-gateway
+    env_file:
+      - .env.production
+    build: ./
+    ports:
+      - ${PORT}:${PORT}
+    restart: always
+    command: yarn start:migrate:prod
+
+  db:
+    image: postgres
+    container_name: db
+    restart: always
+    user: postgres
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=fleet
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ['CMD', 'ps_isready']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:
+secrets:
+  db-password:
+    file: db/password.txt
