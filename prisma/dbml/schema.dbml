@@ -1,0 +1,45 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table vehicles {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  plateNo String [unique, not null]
+  type VehicleType [not null]
+  schedules schedule_on_vehicles [not null]
+  to_delete Boolean [not null, default: false]
+}
+
+Table schedules {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  source String [not null]
+  destination String [not null]
+  startDate DateTime [not null]
+  duration_in_days Int [not null]
+  endDate DateTime [not null]
+  vehicles schedule_on_vehicles [not null]
+}
+
+Table schedule_on_vehicles {
+  schedule schedules [not null]
+  scheduleId Int [not null]
+  vehicle vehicles [not null]
+  vehicleId Int [not null]
+
+  indexes {
+    (scheduleId, vehicleId) [pk]
+  }
+}
+
+Enum VehicleType {
+  SUV
+  Sedan
+}
+
+Ref: schedule_on_vehicles.scheduleId > schedules.id [delete: Cascade]
+
+Ref: schedule_on_vehicles.vehicleId > vehicles.id
