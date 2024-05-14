@@ -3,13 +3,15 @@ import { CreateVehicleDto } from './dto/create-vehicle.dto'
 import { UpdateVehicleDto } from './dto/update-vehicle.dto'
 import { PrismaService } from '@/prisma/prisma.service'
 import { GetVehicleDto } from './dto/get-vehicle.dto'
+import { Prisma } from '@prisma/client'
 
 @Injectable()
 export class VehiclesService {
   constructor(private prisma: PrismaService) {}
 
-  create(createVehicleDto: CreateVehicleDto) {
-    return 'This action adds a new vehicle'
+  create(data: Prisma.VehicleCreateWithoutSchedulesInput) {
+    return this.prisma.vehicle.create({ data })
+    // return 'This action adds a new vehicle'
   }
 
   async findAll() {

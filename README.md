@@ -120,3 +120,4 @@ Interactive diagram can be found [here](https://dbdiagram.io/d/Transport-Api-664
 ## Limitations
 
 - Update schedule endpoint not implemented due to time constraints
+- Prisma errors for vehicle routes not handled
