@@ -8,8 +8,6 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { Logger, ValidationPipe } from '@nestjs/common'
 
-type Environment = 'development' | 'production'
-
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
